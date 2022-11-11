@@ -1,0 +1,71 @@
+a:1:{s:4:"main";a:13:{s:8:"--fmedit";a:1:{s:8:"oncreate";s:193:"global $count;
+$count = 0;
+c("scan")->toFront();
+if ( file_exists("$progDir/data/lastUpdate.ozd") ){
+    c("baseLastUpdate")->caption = file_get_contents("$progDir/data/lastUpdate.ozd");
+}";}s:5:"pages";a:1:{s:8:"onchange";s:232:"switch ( $self->pageIndex ){
+    case 0:
+        c("scan")->toFront();
+    break;
+    case 1:
+        c("base")->toFront();
+        c("about")->toFront();
+    break;
+    case 1:
+        c("about")->toFront();
+    break;
+}";}s:8:"scanfile";N;s:12:"scantypetext";N;s:8:"scantype";a:1:{s:7:"onclick";s:239:"switch ( $self->itemIndex ){
+    case 0:
+        c("scanTypeText")->caption = "Тип сканирования : Сканирование файла";
+    break;
+    case 1:
+        c("scanTypeText")->caption = "Тип сканирования : Сканирование папки";
+    break;
+}";}s:9:"scanstart";a:1:{s:7:"onclick";s:1577:"global $count, $vFile;
+switch ( c("scanType")->itemIndex ){
+    case 0:
+        if ( c("openDlg")->execute() ){
+            c("scanCount")->caption = "Просканировано файлов : 0";
+            $file = c("openDlg")->fileName;
+            c("scanFile")->caption = "Текущий файл $file";
+            $hash = md5( join ( file ( $file ) ) );
+            if ( file_exists("$progDir/data/$hash") ){
+                $vFile = $file;
+                $vType = file_get_contents("$progDir/data/$hash");
+                c("dialog")->title = "Обнаружен вирус!
+Файл : $vFile
+Заражен вирусом : $vType";
+                c("dialog")->execute();
+            }
+            c("scanCount")->caption = "Просканировано файлов : 1";
+        }
+    break;
+    case 1:
+        if ( c("dirDlg")->execute() ){
+            c("scanCount")->caption = "Просканировано файлов : 0";
+            $count = 0;
+            $dir = c("dirDlg")->fileName;
+            $files = "$dir\*.*";
+            foreach ( glob($files ) as $scan ){
+            $hash = md5( join ( file ( $scan ) ) );
+            c("scanFile")->caption = "Текущий файл $scan";
+            if ( file_exists("$progDir/data/$hash") ){
+                $vFile = $scan;
+                $vType = file_get_contents("$progDir/data/$hash");
+                c("dialog")->title = "Обнаружен вирус!
+Файл : $vFile
+Заражен вирусом : $vType";
+                c("dialog")->execute();
+            }
+            $count++;
+            c("scanCount")->caption = "Просканировано файлов : $count";
+            }
+        }
+    break;
+}";}s:4:"scan";N;s:7:"opendlg";N;s:6:"dirdlg";N;s:9:"scancount";N;s:6:"dialog";a:1:{s:8:"onselect";s:132:"global $vFile;
+if ( $self->result == 0 ){
+    file_delete( $vFile );
+}
+if ( $self->result == 2 ){
+    file_delete( $vFile );
+}";}s:4:"base";N;s:5:"about";N;}}
